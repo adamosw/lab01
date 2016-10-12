@@ -1,0 +1,1 @@
+C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\bin\Debug\ServerApplication.exe.config
