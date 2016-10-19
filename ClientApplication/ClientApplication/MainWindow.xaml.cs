@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Net;
+using System.Net.Sockets;
 
 namespace ClientApplication
 {
@@ -20,9 +22,17 @@ namespace ClientApplication
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Socket sck { get; set; }
+        public EndPoint epLocal { get; set; }
+        public EndPoint epRemote { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
+
+            sck = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            sck.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
         }
     }
 }
