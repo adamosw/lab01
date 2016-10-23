@@ -52,7 +52,7 @@
                         <TextBox Name="PortTextBox"  Height="20px"></TextBox>
                     </Grid>
                     <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-                        <Button Name="ConnectButton" Width="150" Height="20px">Connect to the Server</Button>
+                        <Button Name="ConnectButton" Width="150" Height="20px" Click="ConnectButton_Click">Connect to the Server</Button>
                     </Grid>
                 </Grid>
             </Border>
@@ -71,12 +71,12 @@
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0" Grid.Column="0" RowSpan="4">
-                        <ListBox Name="ConversationListBox" IsEnabled="False"></ListBox>
+                        <ListBox Name="ConversationListBox"></ListBox>
                     </Grid>
                     <Grid Grid.Row="4" Grid.Column="0">
                         <StackPanel>
                             <TextBox Name="MessageTextBox"></TextBox>
-                            <Button Name="SendButton" Width="60px">Send</Button>
+                            <Button Name="SendButton" Click="SendButton_Click" Width="60px">Send</Button>
                         </StackPanel>
                     </Grid>
                 </Grid>

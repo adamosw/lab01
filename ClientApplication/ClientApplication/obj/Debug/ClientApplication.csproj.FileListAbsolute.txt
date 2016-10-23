@@ -12,3 +12,17 @@ C:\Users\Adam\Documents\GitHub\lab01\ClientApplication\ClientApplication\obj\Deb
 C:\Users\Adam\Documents\GitHub\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.csproj.GenerateResource.Cache
 C:\Users\Adam\Documents\GitHub\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.exe
 C:\Users\Adam\Documents\GitHub\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.pdb
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\bin\Debug\ClientApplication.exe.config
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.exe
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.pdb
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\bin\Debug\ClientApplication.exe
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\bin\Debug\ClientApplication.pdb
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.csprojResolveAssemblyReference.cache
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\MainWindow.g.cs
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\App.g.cs
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication_MarkupCompile.cache
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication_MarkupCompile.lref
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\MainWindow.baml
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.g.resources
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.Properties.Resources.resources
+C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.csproj.GenerateResource.Cache

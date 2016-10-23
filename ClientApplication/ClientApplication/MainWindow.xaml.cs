@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net;
 using System.Net.Sockets;
+using System.ComponentModel;
+using System.IO;
 
 namespace ClientApplication
 {
@@ -22,17 +24,45 @@ namespace ClientApplication
     /// </summary>
     public partial class MainWindow : Window
     {
-        public Socket sck { get; set; }
-        public EndPoint epLocal { get; set; }
-        public EndPoint epRemote { get; set; }
+        public IPAddress ipAddress { get; set; }
+        public IPEndPoint remoteEP { get; set; }
+        public NetworkStream networkStream { get; set; }
+        public Socket socket { get; set; }
+
+        private string userName { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
+        }
 
-            sck = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            sck.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
+        private void ConnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            userName = NameTextBox.Text;
+
+            string ip = IPTextBox.Text;
+            int port = Int32.Parse(PortTextBox.Text);
+            ipAddress = IPAddress.Parse(ip);
+            remoteEP = new IPEndPoint(ipAddress, port);
+
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(remoteEP);
+
+            networkStream = new NetworkStream(socket);
+
+            ConversationListBox.Items.Add(String.Format("Socket connected to {0}", socket.RemoteEndPoint.ToString()));
+        }
+
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            string message = MessageTextBox.Text;
+
+            StreamWriter streamWriter = new StreamWriter(networkStream);
+            streamWriter.WriteLine(message);
+            streamWriter.Flush();
+
+            ConversationListBox.Items.Add(message);
         }
     }
 }

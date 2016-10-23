@@ -1,1 +1,7 @@
 C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\bin\Debug\ServerApplication.exe.config
+C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\bin\Debug\ServerApplication.exe.config
+C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\bin\Debug\ServerApplication.exe
+C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\bin\Debug\ServerApplication.pdb
+C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\obj\Debug\ServerApplication.csprojResolveAssemblyReference.cache
+C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\obj\Debug\ServerApplication.exe
+C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\obj\Debug\ServerApplication.pdb
