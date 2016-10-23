@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientApplication"
         mc:Ignorable="d"
-        Title="ClientApplication" Height="400" Width="600" MinHeight="400" MinWidth="600">
+        Title="ClientApplication" Height="420" Width="600" MinHeight="420" MinWidth="600">
     <Grid Margin="10px">
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -32,6 +32,7 @@
                         <RowDefinition Height="30px"></RowDefinition>
                         <RowDefinition Height="30px"></RowDefinition>
                         <RowDefinition Height="30px"></RowDefinition>
+                        <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0" Grid.Column="0">
                         <Label>Enter your name:</Label>
@@ -51,7 +52,17 @@
                     <Grid Grid.Row="2" Grid.Column="1">
                         <TextBox Name="PortTextBox"  Height="20px"></TextBox>
                     </Grid>
-                    <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Grid Grid.Row="3" Grid.Column="0">
+                        <Label>Encryption:</Label>
+                    </Grid>
+                    <Grid Grid.Row="3" Grid.Column="1">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Name="XorRadioButton" Height="20px" Width="50px">XOR</RadioButton>
+                            <RadioButton Name="CeasarRadioButton" Height="20px" Width="60px">Ceasar</RadioButton>
+                            <RadioButton Name="NoneRadioButton" Height="20px" Width="50px">None</RadioButton>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
                         <Button Name="ConnectButton" Width="150" Height="20px" Click="ConnectButton_Click">Connect to the Server</Button>
                     </Grid>
                 </Grid>
@@ -76,7 +87,7 @@
                     <Grid Grid.Row="4" Grid.Column="0">
                         <StackPanel>
                             <TextBox Name="MessageTextBox"></TextBox>
-                            <Button Name="SendButton" Click="SendButton_Click" Width="60px">Send</Button>
+                            <Button Name="SendButton" Click="SendButton_Click" Width="60px" IsEnabled="False">Send</Button>
                         </StackPanel>
                     </Grid>
                 </Grid>

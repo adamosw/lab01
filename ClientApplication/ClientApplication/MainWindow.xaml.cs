@@ -16,6 +16,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.ComponentModel;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace ClientApplication
 {
@@ -27,7 +28,11 @@ namespace ClientApplication
         public IPAddress ipAddress { get; set; }
         public IPEndPoint remoteEP { get; set; }
         public NetworkStream networkStream { get; set; }
+        public StreamWriter streamWriter { get; set; }
+        public StreamReader streamReader { get; set; }
         public Socket socket { get; set; }
+        public double secret { get; set; }
+        public string encryption { get; set; }
 
         private string userName { get; set; }
 
@@ -40,6 +45,18 @@ namespace ClientApplication
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
             userName = NameTextBox.Text;
+            if ((bool)XorRadioButton.IsChecked)
+            {
+                encryption = "xor";
+            }
+            else if ((bool)CeasarRadioButton.IsChecked)
+            {
+                encryption = "cezar";
+            }
+            else
+            {
+                encryption = "none";
+            }
 
             string ip = IPTextBox.Text;
             int port = Int32.Parse(PortTextBox.Text);
@@ -51,14 +68,94 @@ namespace ClientApplication
 
             networkStream = new NetworkStream(socket);
 
+            streamWriter = new StreamWriter(networkStream);
+            streamReader = new StreamReader(networkStream);
+
             ConversationListBox.Items.Add(String.Format("Socket connected to {0}", socket.RemoteEndPoint.ToString()));
+
+            bool validation = DiffieHellman();
+
+            if (validation == true)
+            {
+                SendButton.IsEnabled = true;
+            }
+        }
+
+        private bool DiffieHellman()
+        {
+            string data = "";
+            JObject json = new JObject();
+            Random r = new Random();
+            int sa = r.Next(1, 15);
+
+            string request = "{ \"request\": \"keys\" }";
+            streamWriter.WriteLine(request);
+            streamWriter.Flush();
+            ConversationListBox.Items.Add(String.Format("Client: {0}", request));
+
+            data = streamReader.ReadLine();
+            ConversationListBox.Items.Add(String.Format("Server: {0}", data));
+            json = JObject.Parse(data);
+            string p = (string)json["p"];
+            string g = (string)json["g"];
+            if (p == null || g == null)
+            {
+                return false;
+            }
+
+            double a = Math.Pow(Double.Parse(g), (double)sa) % Double.Parse(p);
+
+            request = String.Format("{{ \"a\": {0} }}", a);
+            streamWriter.WriteLine(request);
+            streamWriter.Flush();
+            ConversationListBox.Items.Add(String.Format("Client: {0}", request));
+
+            data = streamReader.ReadLine();
+            ConversationListBox.Items.Add(String.Format("Server: {0}", data));
+            json = JObject.Parse(data);
+            string b = (string)json["b"];
+            if (b == null)
+            {
+                return false;
+            }
+
+            secret = Math.Pow(Double.Parse(b), sa) % Double.Parse(p);
+            ConversationListBox.Items.Add(secret);
+
+            request = String.Format("{{ \"encryption\": \"{0}\" }}", encryption);
+            streamWriter.WriteLine(request);
+            streamWriter.Flush();
+            ConversationListBox.Items.Add(String.Format("Client: {0}", request));
+
+            return true;
+        }
+
+        public string Encrypt(string message)
+        {
+            List<char> charList = message.ToCharArray().ToList();
+
+            if (encryption == "xor")
+            {
+                for (int i = 0; i < charList.Count; i++)
+                {
+                    charList[i] = (char)(charList[i] ^ ((char)secret & 255));
+                }
+            }
+            else if (encryption == "cezar")
+            {
+                /*for (int i = 0; i < charList.Count; i++)
+                {
+                    charList[i] = (char)(charList[i] ^ ((char)Secret & 255));
+                }*/
+            }
+            return new string(charList.ToArray());
         }
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
             string message = MessageTextBox.Text;
+            message = Encrypt(message);
 
-            StreamWriter streamWriter = new StreamWriter(networkStream);
             streamWriter.WriteLine(message);
             streamWriter.Flush();
 
