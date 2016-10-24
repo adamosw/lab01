@@ -62,8 +62,11 @@
                             <RadioButton Name="NoneRadioButton" Height="20px" Width="50px">None</RadioButton>
                         </StackPanel>
                     </Grid>
-                    <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Grid Grid.Row="4" Grid.Column="1">
                         <Button Name="ConnectButton" Width="150" Height="20px" Click="ConnectButton_Click">Connect to the Server</Button>
+                    </Grid>
+                    <Grid Grid.Row="4" Grid.Column="0">
+                        <Button Name="DisconnectButton" Width="150" Height="20px" Visibility="Hidden" Click="DisconnectButton_Click">Disconnect from the Server</Button>
                     </Grid>
                 </Grid>
             </Border>

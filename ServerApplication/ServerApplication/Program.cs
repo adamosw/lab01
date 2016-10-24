@@ -57,14 +57,22 @@ namespace ServerApplication
             bool validation = DiffieHellman();
 
             string data = String.Empty;
+            JObject json = new JObject();
+            string message = "";
 
-            while (true)
+            while ((data = streamReader.ReadLine()) != null)
             {
-                data = streamReader.ReadLine();
                 Console.WriteLine(data);
-                data = Decrypt(data);
+                json = JObject.Parse(data);
+                message = (string)json["msg"];
+                var base64EncodedBytes = System.Convert.FromBase64String(message);
+                message = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                data = Decrypt(message);
                 Console.WriteLine(data);
             }
+
+            client.Shutdown(SocketShutdown.Both);
+            client.Close();
         }
 
         public bool DiffieHellman()
@@ -132,20 +140,31 @@ namespace ServerApplication
         public string Decrypt(string message)
         {
             List<char> charList = message.ToCharArray().ToList();
-
             if (Encryption == "xor")
             {
                 for (int i = 0; i < charList.Count; i++)
                 {
-                    charList[i] = (char)(charList[i] ^ ((char)Secret & 255));
+                    charList[i] = (char)(charList[i] ^ ((char)Secret & 0xFF));
                 }
             }
             else if (Encryption == "cezar")
             {
-                /*for (int i = 0; i < charList.Count; i++)
+                charList = message.ToLower().ToCharArray().ToList();
+                for (int i = 0; i < charList.Count; i++)
                 {
-                    charList[i] = (char)(charList[i] ^ ((char)Secret & 255));
-                }*/
+                    if (charList[i] != 32)
+                    {
+                        charList[i] = (char)(charList[i] - Secret);
+                        if (charList[i] > 'z')
+                        {
+                            charList[i] = (char)(charList[i] - 26);
+                        }
+                        else if (charList[i] < 'a')
+                        {
+                            charList[i] = (char)(charList[i] + 26);
+                        }
+                    }
+                }
             }
             return new string(charList.ToArray());
         }

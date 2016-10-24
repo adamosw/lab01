@@ -77,6 +77,8 @@ namespace ClientApplication
 
             if (validation == true)
             {
+                ConnectButton.IsEnabled = false;
+                DisconnectButton.Visibility = Visibility.Visible;
                 SendButton.IsEnabled = true;
             }
         }
@@ -143,10 +145,22 @@ namespace ClientApplication
             }
             else if (encryption == "cezar")
             {
-                /*for (int i = 0; i < charList.Count; i++)
+                charList = message.ToLower().ToCharArray().ToList();
+                for (int i = 0; i < charList.Count; i++)
                 {
-                    charList[i] = (char)(charList[i] ^ ((char)Secret & 255));
-                }*/
+                    if (charList[i] != 32)
+                    {
+                        charList[i] = (char)(charList[i] + secret);
+                        if (charList[i] > 'z')
+                        {
+                            charList[i] = (char)(charList[i] - 26);
+                        }
+                        else if (charList[i] < 'a')
+                        {
+                            charList[i] = (char)(charList[i] + 26);
+                        }
+                    }
+                }
             }
             return new string(charList.ToArray());
         }
@@ -155,11 +169,23 @@ namespace ClientApplication
         {
             string message = MessageTextBox.Text;
             message = Encrypt(message);
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(message);
+            message = System.Convert.ToBase64String(plainTextBytes);
+            string json = String.Format("{{ \"msg\": \"{0}\", \"from\": \"{1}\" }}", message, userName);
 
-            streamWriter.WriteLine(message);
+            streamWriter.WriteLine(json);
             streamWriter.Flush();
 
             ConversationListBox.Items.Add(message);
+        }
+
+        private void DisconnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
+            DisconnectButton.Visibility = Visibility.Hidden;
+            SendButton.IsEnabled = false;
+            ConnectButton.IsEnabled = true;
         }
     }
 }
