@@ -7,3 +7,10 @@ C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\obj\Debug\Server
 C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\obj\Debug\ServerApplication.pdb
 C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Adam\Desktop\lab01\ServerApplication\ServerApplication\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\obj\Debug\ServerApplication.exe
+C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\obj\Debug\ServerApplication.pdb
+C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\bin\Debug\ServerApplication.exe
+C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\bin\Debug\ServerApplication.pdb
+C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Adam\Documents\GitHub\lab01\ServerApplication\ServerApplication\obj\Debug\ServerApplication.csprojResolveAssemblyReference.cache

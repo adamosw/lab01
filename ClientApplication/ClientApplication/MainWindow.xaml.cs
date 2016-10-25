@@ -269,8 +269,6 @@ namespace ClientApplication
             streamWriter.WriteLine(json);
             streamWriter.Flush();
 
-            ConversationListBox.Items.Add(message);
-
             MessageTextBox.Text = "";
         }
 

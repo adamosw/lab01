@@ -28,3 +28,5 @@ C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\Client
 C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\obj\Debug\ClientApplication.csproj.GenerateResource.Cache
 C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Adam\Desktop\lab01\ClientApplication\ClientApplication\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Adam\Documents\GitHub\lab01\ClientApplication\ClientApplication\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Adam\Documents\GitHub\lab01\ClientApplication\ClientApplication\bin\Debug\Newtonsoft.Json.xml

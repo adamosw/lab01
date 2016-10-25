@@ -27,16 +27,30 @@ namespace ServerApplication
             clientSockets = new List<Socket>();
             clientSessions = new List<Session>();
 
-            ipAddress = IPAddress.Parse("127.0.0.1");
-            Console.Write("Enter the servers port: ");
-            string port = Console.ReadLine();
-            serverPort = Int32.Parse(port);
+            try
+            {
+                Console.Write("Enter the servers IP: ");
+                string ip = Console.ReadLine();
+                ipAddress = IPAddress.Parse(ip);
+                Console.Write("Enter the servers port: ");
+                string port = Console.ReadLine();
+                serverPort = Int32.Parse(port);
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine("Invalid data.");
+                Console.ReadLine();
+                return;
+            }
 
             localEndPoint = new IPEndPoint(ipAddress, serverPort);
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(localEndPoint);
             socket.Listen(10);
+
+            Thread listeningThread = new Thread(new ThreadStart(StartListening));
+            listeningThread.Start();
         }
 
         public void StartListening()
@@ -44,6 +58,9 @@ namespace ServerApplication
             Session session;
             Thread sessionThread;
             Socket client;
+
+            Console.WriteLine("Listening...");
+
             while (true)
             {
                 client = socket.Accept();
@@ -77,8 +94,6 @@ namespace ServerApplication
         {
             Program Server = new Program();
             Server.Initialize();
-            Thread listeningThread = new Thread(new ThreadStart(Server.StartListening));
-            listeningThread.Start();
         }
     }
 }

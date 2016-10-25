@@ -25,6 +25,8 @@ namespace ServerApplication
         {
             this.clientSocket = clientSocket;
             this.Server = server;
+            Random r = new Random();
+            RandomNumber = r.Next(1, 15);
         }
 
         public void ManageClientSession()
@@ -36,9 +38,6 @@ namespace ServerApplication
             streamReader = new StreamReader(networkStream);
             streamWriter = new StreamWriter(networkStream);
 
-            Random r = new Random();
-            RandomNumber = r.Next(1, 15);
-
             bool validation = DiffieHellman();
 
             string data = String.Empty;
@@ -46,17 +45,24 @@ namespace ServerApplication
             string message = "";
             string author = "";
 
-            while ((data = streamReader.ReadLine()) != null)
+            try
             {
-                Console.WriteLine(data);
-                json = JObject.Parse(data);
-                message = (string)json["msg"];
-                author = (string)json["from"];
-                var base64EncodedBytes = System.Convert.FromBase64String(message);
-                message = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-                data = Decrypt(message);
-                Server.Broadcast(data, author);
-                Console.WriteLine(data);
+                while ((data = streamReader.ReadLine()) != null)
+                {
+                    Console.WriteLine(data);
+                    json = JObject.Parse(data);
+                    message = (string)json["msg"];
+                    author = (string)json["from"];
+                    var base64EncodedBytes = System.Convert.FromBase64String(message);
+                    message = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                    data = Decrypt(message);
+                    Server.Broadcast(data, author);
+                    Console.WriteLine(data);
+                }
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
             clientSocket.Shutdown(SocketShutdown.Both);
