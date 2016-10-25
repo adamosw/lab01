@@ -7,173 +7,78 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServerApplication
 {
     class Program
     {
-        public string name;
         public IPHostEntry ipHostInfo { get; set; }
         public IPAddress ipAddress { get; set; }
         public IPEndPoint localEndPoint { get; set; }
         public int serverPort { get; set; }
         public Socket socket { get; set; }
-        public NetworkStream networkStream { get; set; }
-        public StreamReader streamReader { get; set; }
-        public StreamWriter streamWriter { get; set; }
-        public int RandomNumber { get; set; }
-        public string Encryption { get; set; }
-        public double Secret { get; set; }
+        public List<Socket> clientSockets { get; set; }
+        public List<Session> clientSessions { get; set; }
 
         public void Initialize()
         {
+            clientSockets = new List<Socket>();
+            clientSessions = new List<Session>();
+
             ipAddress = IPAddress.Parse("127.0.0.1");
-            Console.WriteLine("Enter the servers port: ");
+            Console.Write("Enter the servers port: ");
             string port = Console.ReadLine();
             serverPort = Int32.Parse(port);
 
             localEndPoint = new IPEndPoint(ipAddress, serverPort);
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            Random r = new Random();
-            RandomNumber = r.Next(1, 15);
+            socket.Bind(localEndPoint);
+            socket.Listen(10);
         }
 
         public void StartListening()
         {
-            socket.Bind(localEndPoint);
-            socket.Listen(10);
-
-            Socket client = socket.Accept();
-            IPEndPoint newclient = (IPEndPoint)client.RemoteEndPoint;
-            Console.WriteLine("Connected with {0} at port {1}", newclient.Address, newclient.Port);
-
-            networkStream = new NetworkStream(client);
-            streamReader = new StreamReader(networkStream);
-            streamWriter = new StreamWriter(networkStream);
-
-            bool validation = DiffieHellman();
-
-            string data = String.Empty;
-            JObject json = new JObject();
-            string message = "";
-
-            while ((data = streamReader.ReadLine()) != null)
+            Session session;
+            Thread sessionThread;
+            Socket client;
+            while (true)
             {
-                Console.WriteLine(data);
-                json = JObject.Parse(data);
-                message = (string)json["msg"];
-                var base64EncodedBytes = System.Convert.FromBase64String(message);
-                message = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-                data = Decrypt(message);
-                Console.WriteLine(data);
+                client = socket.Accept();
+                clientSockets.Add(client);
+                session = new Session(client, this);
+                clientSessions.Add(session);
+                sessionThread = new Thread(new ThreadStart(session.ManageClientSession));
+                sessionThread.Start();
             }
-
-            client.Shutdown(SocketShutdown.Both);
-            client.Close();
         }
 
-        public bool DiffieHellman()
+        public void Broadcast(string message, string author)
         {
-            string serverRequest = "";
-            string data = "";
-            JObject json = new JObject();
-            int sb = RandomNumber;
-
-            data = streamReader.ReadLine();
-            Console.WriteLine(String.Format("Client: {0}", data));
-            json = JObject.Parse(data);
-            string request = (string)json["request"];
-            if (request != "keys")
+            foreach (Session session in clientSessions)
             {
-                return false;
+                session.SendToClient(message, author);
             }
-
-            double p = 23;
-            double g = 5;
-            serverRequest = String.Format("{{ \"p\": {0}, \"g\": {1} }}", p, g);
-            streamWriter.WriteLine(serverRequest);
-            streamWriter.Flush();
-            Console.WriteLine(String.Format("Server: {0}", serverRequest));
-
-
-            double b = Math.Pow(g, (double)sb) % p;
-            serverRequest = String.Format("{{ \"b\": {0} }}", b);
-            streamWriter.WriteLine(serverRequest);
-            streamWriter.Flush();
-            Console.WriteLine(String.Format("Server: {0}", serverRequest));
-
-            data = streamReader.ReadLine();
-            Console.WriteLine(String.Format("Client: {0}", data));
-            json = JObject.Parse(data);
-            string a = (string)json["a"];
-            if (a == null)
-            {
-                return false;
-            }
-
-            Secret = Math.Pow(Double.Parse(a), sb) % p;
-            Console.WriteLine(Secret);
-
-            data = streamReader.ReadLine();
-            Console.WriteLine(String.Format("Client: {0}", data));
-            json = JObject.Parse(data);
-            string encryption = (string)json["encryption"];
-            if (encryption != null)
-            {
-                //TO DO: Encryption
-                if (encryption == "xor")
-                {
-                    this.Encryption = encryption;
-                }
-                else if (encryption == "cezar")
-                {
-                    this.Encryption = encryption;
-                }
-            }
-
-            return true;
         }
 
-        public string Decrypt(string message)
+        public void deleteSocket(Socket socket)
         {
-            List<char> charList = message.ToCharArray().ToList();
-            if (Encryption == "xor")
-            {
-                for (int i = 0; i < charList.Count; i++)
-                {
-                    charList[i] = (char)(charList[i] ^ ((char)Secret & 0xFF));
-                }
-            }
-            else if (Encryption == "cezar")
-            {
-                charList = message.ToLower().ToCharArray().ToList();
-                for (int i = 0; i < charList.Count; i++)
-                {
-                    if (charList[i] != 32)
-                    {
-                        charList[i] = (char)(charList[i] - Secret);
-                        if (charList[i] > 'z')
-                        {
-                            charList[i] = (char)(charList[i] - 26);
-                        }
-                        else if (charList[i] < 'a')
-                        {
-                            charList[i] = (char)(charList[i] + 26);
-                        }
-                    }
-                }
-            }
-            return new string(charList.ToArray());
+            clientSockets.Remove(socket);   
+        }
+
+        public void deleteSession(Session session)
+        {
+            clientSessions.Remove(session);
         }
 
         static void Main(string[] args)
         {
             Program Server = new Program();
             Server.Initialize();
-            Server.StartListening();
+            Thread listeningThread = new Thread(new ThreadStart(Server.StartListening));
+            listeningThread.Start();
         }
     }
 }

@@ -17,6 +17,7 @@ using System.Net.Sockets;
 using System.ComponentModel;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace ClientApplication
 {
@@ -33,6 +34,7 @@ namespace ClientApplication
         public Socket socket { get; set; }
         public double secret { get; set; }
         public string encryption { get; set; }
+        Thread listeningThread { get; set; }
 
         private string userName { get; set; }
 
@@ -59,12 +61,31 @@ namespace ClientApplication
             }
 
             string ip = IPTextBox.Text;
-            int port = Int32.Parse(PortTextBox.Text);
-            ipAddress = IPAddress.Parse(ip);
+            int port = 0;
+
+            try
+            {
+                port = Int32.Parse(PortTextBox.Text);
+                ipAddress = IPAddress.Parse(ip);
+            }
+            catch (FormatException ex)
+            {
+                ConversationListBox.Items.Add(ex.Message);
+                return;
+            }
             remoteEP = new IPEndPoint(ipAddress, port);
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(remoteEP);
+
+            try
+            {
+                socket.Connect(remoteEP);
+            }
+            catch (SocketException ex)
+            {
+                ConversationListBox.Items.Add(ex.Message);
+                return;
+            }
 
             networkStream = new NetworkStream(socket);
 
@@ -80,6 +101,46 @@ namespace ClientApplication
                 ConnectButton.IsEnabled = false;
                 DisconnectButton.Visibility = Visibility.Visible;
                 SendButton.IsEnabled = true;
+                NameTextBox.IsEnabled = false;
+                IPTextBox.IsEnabled = false;
+                PortTextBox.IsEnabled = false;
+                CeasarRadioButton.IsEnabled = false;
+                XorRadioButton.IsEnabled = false;
+                NoneRadioButton.IsEnabled = false;
+            }
+
+            listeningThread = new Thread(new ThreadStart(this.Listen));
+            listeningThread.Start();
+        }
+
+        private void Listen()
+        {
+            string data = "";
+            string message = "";
+            string author = "";
+            JObject json = new JObject();
+            try
+            {
+                while ((data = streamReader.ReadLine()) != null)
+                {
+                    json = JObject.Parse(data);
+                    author = (string)json["from"];
+                    message = (string)json["msg"];
+                    var base64EncodedBytes = System.Convert.FromBase64String(message);
+                    message = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                    data = Decrypt(message);
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ConversationListBox.Items.Add(String.Format("{0}: {1}", author, data));
+                    });
+                }
+            }
+            catch (IOException e)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    ConversationListBox.Items.Add("Disconnected.");
+                });
             }
         }
 
@@ -165,6 +226,38 @@ namespace ClientApplication
             return new string(charList.ToArray());
         }
 
+        public string Decrypt(string message)
+        {
+            List<char> charList = message.ToCharArray().ToList();
+            if (encryption == "xor")
+            {
+                for (int i = 0; i < charList.Count; i++)
+                {
+                    charList[i] = (char)(charList[i] ^ ((char)secret & 0xFF));
+                }
+            }
+            else if (encryption == "cezar")
+            {
+                charList = message.ToLower().ToCharArray().ToList();
+                for (int i = 0; i < charList.Count; i++)
+                {
+                    if (charList[i] != 32)
+                    {
+                        charList[i] = (char)(charList[i] - secret);
+                        if (charList[i] > 'z')
+                        {
+                            charList[i] = (char)(charList[i] - 26);
+                        }
+                        else if (charList[i] < 'a')
+                        {
+                            charList[i] = (char)(charList[i] + 26);
+                        }
+                    }
+                }
+            }
+            return new string(charList.ToArray());
+        }
+
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
             string message = MessageTextBox.Text;
@@ -177,15 +270,24 @@ namespace ClientApplication
             streamWriter.Flush();
 
             ConversationListBox.Items.Add(message);
+
+            MessageTextBox.Text = "";
         }
 
         private void DisconnectButton_Click(object sender, RoutedEventArgs e)
         {
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
+
+            ConnectButton.IsEnabled = true;
             DisconnectButton.Visibility = Visibility.Hidden;
             SendButton.IsEnabled = false;
-            ConnectButton.IsEnabled = true;
+            NameTextBox.IsEnabled = true;
+            IPTextBox.IsEnabled = true;
+            PortTextBox.IsEnabled = true;
+            CeasarRadioButton.IsEnabled = true;
+            XorRadioButton.IsEnabled = true;
+            NoneRadioButton.IsEnabled = true;
         }
     }
 }
