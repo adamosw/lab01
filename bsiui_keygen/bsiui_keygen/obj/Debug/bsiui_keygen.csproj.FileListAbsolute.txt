@@ -1,0 +1,6 @@
+C:\Users\Adam\Desktop\bsiui_keygen\bsiui_keygen\bin\Debug\bsiui_keygen.exe.config
+C:\Users\Adam\Desktop\bsiui_keygen\bsiui_keygen\bin\Debug\bsiui_keygen.exe
+C:\Users\Adam\Desktop\bsiui_keygen\bsiui_keygen\bin\Debug\bsiui_keygen.pdb
+C:\Users\Adam\Desktop\bsiui_keygen\bsiui_keygen\obj\Debug\bsiui_keygen.csprojResolveAssemblyReference.cache
+C:\Users\Adam\Desktop\bsiui_keygen\bsiui_keygen\obj\Debug\bsiui_keygen.exe
+C:\Users\Adam\Desktop\bsiui_keygen\bsiui_keygen\obj\Debug\bsiui_keygen.pdb
