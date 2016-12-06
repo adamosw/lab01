@@ -1,0 +1,1 @@
+Katalog patcher zawiera pliki projektu œrodowiska Eclipse . Projekt jest gotowy do uruchomienia od razu po otwarciu.
